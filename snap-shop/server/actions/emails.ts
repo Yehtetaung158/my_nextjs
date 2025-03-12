@@ -3,6 +3,7 @@
 import DropboxResetPasswordEmail from "@/components/email-template";
 import { getBaseUrl } from "@/lib/get-baseUrl";
 import { Resend } from "resend";
+import { users } from "../schema";
 // const resend = new Resend(process.env.RESEND_API_KEY);
 const resend = new Resend("re_YAXKWvqM_4fGU7ktTjeNjeTK9hXZZwHtX");
 
@@ -11,7 +12,7 @@ export const sendEmail = async (
   token: string,
   userFirstName: string
 ) => {
-  const confirmEmailLink = `${getBaseUrl()}/confirm-email?token=${token}`;
+  const confirmEmailLink = `${getBaseUrl()}/auth/confirm-email?token=${token}`;
   const { data, error } = await resend.emails.send({
     from: "Acme <onboarding@resend.dev>",
     // to: ["delivered@resend.dev"],

@@ -2,14 +2,32 @@
 
 import { eq } from "drizzle-orm";
 import { db } from "..";
-import { emailVerificationToken } from "../schema";
+import { emailVerificationToken, users } from "../schema";
 
-const checkEmailValidationToken = async (email: string) => {
+const checkEmailValidationToken = async (
+  email: string | null,
+  token?: string
+) => {
   try {
-    const token = await db.query.emailVerificationToken.findFirst({
-      where: eq(emailVerificationToken.email, email),
-    });
-    return token;
+    let ValidationToken:
+      | {
+          id: string;
+          email: string;
+          token: string;
+          expired: Date;
+        }
+      | undefined;
+    if (email) {
+      const ValidationToken = await db.query.emailVerificationToken.findFirst({
+        where: eq(emailVerificationToken.email, email!),
+      });
+      return ValidationToken;
+    } else if (token) {
+      const ValidationToken = await db.query.emailVerificationToken.findFirst({
+        where: eq(emailVerificationToken.token, token),
+      });
+      return ValidationToken;
+    }
   } catch (err) {
     return null;
   }
@@ -25,10 +43,41 @@ export const generateEmailValidationToken = async (email: string) => {
       .where(eq(emailVerificationToken.id, existingToken.id));
   }
 
-  const veriFicationToken = await db.insert(emailVerificationToken).values({
-    email,
-    token,
-    expires,
-  }).returning();
+  const veriFicationToken = await db
+    .insert(emailVerificationToken)
+    .values({
+      email,
+      token,
+      expires,
+    })
+    .returning();
   return veriFicationToken;
+};
+
+//email confirmation
+export const emailConfirmWithToken = async (token: string) => {
+  const existingToken = await checkEmailValidationToken(null, token);
+  if (!existingToken) return { error: "Invalid token" };
+
+  const isExpired = new Date() > new Date(existingToken.expires);
+  if (isExpired) return { error: "Token expired" };
+
+  const existingUser = await db.query.users.findFirst({
+    where: eq(users.email, existingToken.email),
+  });
+  if (!existingUser) return { error: "User is not found" };
+
+  await db
+    .update(users)
+    .set({
+      emailVerified: new Date(),
+      email: existingToken.email,
+    })
+    .where(eq(users.id, existingUser.id));
+
+  await db
+    .delete(emailVerificationToken)
+    .where(eq(emailVerificationToken.id, existingToken.id));
+
+  return { success: "Email verification is successfully done" };
 };

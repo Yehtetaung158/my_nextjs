@@ -35,14 +35,19 @@ const Register = () => {
   const { execute, isExecuting, status, result } = useAction(register, {
     onSuccess: ({ data }) => {
       form.reset();
-      toast.success(data?.success, {
-        action: {
-          label: "Open Gmail",
-          onClick: () => {
-            window.open("https://mail.google.com/", "_blank");
+      if (data?.error) {
+        toast.error(data.error);
+      }
+      if (data?.success) {
+        toast.success(data?.success, {
+          action: {
+            label: "Open Gmail",
+            onClick: () => {
+              window.open("https://mail.google.com/", "_blank");
+            },
           },
-        },
-      });
+        });
+      }
     },
   });
   const onSubmit = async (values: z.infer<typeof registerSchema>) => {
@@ -111,7 +116,7 @@ const Register = () => {
             <Button
               className={cn(
                 "w-full my-4",
-                status === "executing" && "animate-pulse bg-yellow-300"
+                status === "executing" && "animate-pulse"
               )}
               disabled={status === "executing"}
             >
