@@ -19,6 +19,7 @@ import Link from "next/link";
 import { useAction } from "next-safe-action/hooks";
 import { login } from "@/server/actions/login-actions";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 const Login = () => {
   const form = useForm({
@@ -29,7 +30,18 @@ const Login = () => {
     },
   });
 
-  const { execute, status, result } = useAction(login);
+  const { execute, status, result } = useAction(login, {
+    onSuccess({ data }) {
+      console.log("I am login success------------ .", data);
+      form.reset();
+      if (data?.error) {
+        toast.error(data.error);
+      }
+      if (data?.success) {
+        toast.success(data?.success);
+      }
+    },
+  });
 
   const onSubmit = (values: z.infer<typeof loginSchema>) => {
     console.log(values);
@@ -81,9 +93,7 @@ const Login = () => {
               )}
               disabled={status === "executing"}
             >
-              {status === "executing"
-                ? "Loading...................."
-                : "Login"}
+              {status === "executing" ? "Loading...................." : "Login"}
             </Button>
           </div>
         </form>
