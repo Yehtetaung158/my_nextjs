@@ -116,3 +116,14 @@ export const generatePasswordResetToken = async (email: string) => {
     .returning();
   return passwordResetToken;
 };
+
+export const checkPasswordResetTokenByToken = async (token: string) => {
+  try {
+    const passwordResetToken = await db.query.resetPasswordToken.findFirst({
+      where: eq(resetPasswordToken.token, token),
+    });
+    return passwordResetToken;
+  } catch (err) {
+    return null;
+  }
+};
