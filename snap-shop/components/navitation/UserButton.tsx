@@ -18,12 +18,6 @@ import { use, useEffect } from "react";
 
 const UserButton = () => {
   const { session, status } = useSessionData();
-  console.log("I am session data in UserButton ---------->", session?.user?.email);
-  useEffect(() => {
-    console.log("I am session data in UserButton useEffect ---------->", session?.user?.email)
-  }
-  , [session?.user?.email]);
-
   return (
     <div className=" flex justify-center items-center">
       {session?.user?.email ? (

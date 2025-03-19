@@ -20,17 +20,18 @@ import { useAction } from "next-safe-action/hooks";
 import { login } from "@/server/actions/login-actions";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { passwordResetSchema } from "@/types/password-reset-schema";
+import { resetPassword } from "@/server/actions/reset-password-action";
 
-const Login = () => {
+const ResetPassword = () => {
   const form = useForm({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(passwordResetSchema),
     defaultValues: {
       email: "",
-      password: "",
     },
   });
 
-  const { execute, status, result } = useAction(login, {
+  const { execute, status, result } = useAction(resetPassword, {
     onSuccess({ data }) {
       console.log("I am login success------------ .", data);
       form.reset();
@@ -38,23 +39,31 @@ const Login = () => {
         toast.error(data.error);
       }
       if (data?.success) {
-        toast.success(data?.success);
+        toast.success(data?.success,{
+          action:{
+            label:"Open Email",
+            onClick:()=>{
+              window.open("https://mail.google.com/", "_blank");
+            }
+          }
+        });
+        
       }
     },
   });
 
-  const onSubmit = (values: z.infer<typeof loginSchema>) => {
+  const onSubmit = (values: z.infer<typeof passwordResetSchema>) => {
     console.log(values);
-    const { email, password } = values;
-    execute({ email, password });
+    const { email } = values;
+    execute({ email });
   };
 
   return (
     <AuthForm
-      formTitle="Login"
-      showProvider={true}
-      footerLabel="Don't have an account?"
-      footerHref="/auth/register"
+      formTitle="Reset Password"
+      showProvider={false}
+      footerLabel="Already have an account?"
+      footerHref="/auth/login"
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -71,21 +80,10 @@ const Login = () => {
                 </FormItem>
               )}
             />
-            <FormField
-              name="password"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input type="password" placeholder="********" {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <Button size={"sm"} variant={"link"}>
+            {/* <Button size={"sm"} variant={"link"}>
               <Link href={"/auth/reset"}>Forgot Password</Link>
-            </Button>
+            </Button> */}
+            
             <Button
               className={cn(
                 "w-full my-4",
@@ -93,7 +91,9 @@ const Login = () => {
               )}
               disabled={status === "executing"}
             >
-              {status === "executing" ? "Loading...................." : "Login"}
+              {status === "executing"
+                ? "Loading...................."
+                : "Reset Password"}
             </Button>
           </div>
         </form>
@@ -102,4 +102,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ResetPassword;

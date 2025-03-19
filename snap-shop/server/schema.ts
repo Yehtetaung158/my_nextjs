@@ -11,13 +11,12 @@ import {
 import type { AdapterAccount } from "next-auth/adapters";
 import { createId } from "@paralleldrive/cuid2";
 
-// pgEnum ကို မှန်ကန်စွာ သတ်မှတ်ပါ
 export const RoleEnum = pgEnum("role", ["user", "admin"]);
 
 export const users = pgTable("user", {
   id: text("id")
     .primaryKey()
-    .$defaultFn(() => createId()), // crypto.randomUUID() အစား ဤသို့ပြင်ပါ
+    .$defaultFn(() => createId()),
   name: text("name"),
   email: text("email").unique(),
   password: text("password"),
@@ -25,7 +24,7 @@ export const users = pgTable("user", {
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image"),
   isTwoFactorEnabled: boolean("isTwoFactorEnabled").default(false),
-  role: RoleEnum("role").default("user"), // "roles" မဟုတ် "role" ဟု ပြင်ပါ
+  role: RoleEnum("role").default("user"),
 });
 
 export const accounts = pgTable(
@@ -54,6 +53,21 @@ export const accounts = pgTable(
 
 export const emailVerificationToken = pgTable(
   "email_verification_token",
+  {
+    id: text("id")
+      .notNull()
+      .$defaultFn(() => createId()),
+    token: text("token").notNull(),
+    expires: timestamp("expires", { mode: "date" }).notNull(),
+    email: text("email").notNull(),
+  },
+  (vt) => ({
+    compoundKey: primaryKey({ columns: [vt.id, vt.token] }),
+  })
+);
+
+export const resetPasswordToken = pgTable(
+  "reset_password_token",
   {
     id: text("id")
       .notNull()
