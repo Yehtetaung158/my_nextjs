@@ -13,7 +13,7 @@ export const sendEmail = async (
   token: string,
   userFirstName: string
 ) => {
-  const confirmEmailLink = `${getBaseUrl()}/auth/confirm-email?token=${token}`;
+  const confirmEmailLink = `${getBaseUrl()}/confirm-email?token=${token}`;
   const { data, error } = await resend.emails.send({
     from: "Acme <onboarding@resend.dev>",
     // to: ["delivered@resend.dev"],
@@ -36,7 +36,7 @@ export const sendPasswordResetEmail = async (
   // username:string,
   token: string,
 ) => {
-  const resetLink = `${getBaseUrl()}/auth/change-password?token=${token}`;
+  const resetLink = `${getBaseUrl()}/change-password?token=${token}`;
   const { data, error } = await resend.emails.send({
     from: "Acme <onboarding@resend.dev>",
     // to: ["delivered@resend.dev"],

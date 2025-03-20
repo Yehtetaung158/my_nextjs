@@ -15,6 +15,7 @@ import { Avatar, AvatarImage } from "../ui/avatar";
 import { AvatarFallback } from "@radix-ui/react-avatar";
 import { LogOut, Settings, Truck } from "lucide-react";
 import { use, useEffect } from "react";
+import { redirect } from "next/navigation";
 
 const UserButton = () => {
   const { session, status } = useSessionData();
@@ -48,7 +49,10 @@ const UserButton = () => {
               <Truck className="w-5 h-5 mr-3" />
               <span className=" text-sm font-medium">My Orders</span>
             </DropdownMenuItem>
-            <DropdownMenuItem className=" cursor-pointer">
+            <DropdownMenuItem
+              className=" cursor-pointer"
+              onClick={() => redirect("/dashboard/settings")}
+            >
               <Settings className="w-5 h-5 mr-3" />
               <span className=" text-sm font-medium">Setting</span>
             </DropdownMenuItem>
@@ -62,9 +66,10 @@ const UserButton = () => {
           </DropdownMenuContent>
         </DropdownMenu>
       ) : (
-
         <Button asChild>
-          <Link href="/auth/login">{status === "loading" ? "Loading..." : "Login"}</Link>
+          <Link href="/auth/login">
+            {status === "loading" ? "Loading..." : "Login"}
+          </Link>
         </Button>
       )}
     </div>
