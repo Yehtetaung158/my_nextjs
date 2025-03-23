@@ -10,6 +10,7 @@ import React from "react";
 const Settings = async () => {
   const session = await auth();
   if (!session?.user) return redirect("/");
+  console.log("session", session.user);
   return (
     <SettingCard
       formTitle="Settings"
@@ -20,8 +21,12 @@ const Settings = async () => {
           <ProfileCard session={session!} />
         </Card>
         <div className=" col-span-1 flex flex-col gap-1 justify-center items-center w-full h-full">
-          <ChangePassword />
-          <TwoFactor />
+          {!session.user.isOauth && (
+            <>
+              <ChangePassword email={session.user.email} />
+              <TwoFactor />
+            </>
+          )}
         </div>
       </main>
     </SettingCard>

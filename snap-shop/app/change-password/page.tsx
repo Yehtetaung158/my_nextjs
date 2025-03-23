@@ -20,6 +20,7 @@ import { toast } from "sonner";
 import { changePasswordSchema } from "@/types/change-password-schema";
 import { changePassword } from "@/server/actions/change-password-action";
 import { redirect, useSearchParams } from "next/navigation";
+import { signOut } from "next-auth/react";
 
 const ChangePassword = () => {
   const form = useForm({
@@ -37,14 +38,8 @@ const ChangePassword = () => {
         toast.error(data.error);
       }
       if (data?.success) {
-        toast.success(data?.success,{
-          action:{
-            label:"Go to Login Page",
-            onClick:()=>{
-              redirect("/auth/login");
-            }
-          }
-        });
+        signOut({ callbackUrl: "/auth/login" });
+        toast.success(data?.success);
       }
     },
   });

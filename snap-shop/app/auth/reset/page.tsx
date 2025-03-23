@@ -20,6 +20,7 @@ import { toast } from "sonner";
 import { passwordResetSchema } from "@/types/password-reset-schema";
 import { resetPassword } from "@/server/actions/reset-password-action";
 
+
 const ResetPassword = () => {
   const form = useForm({
     resolver: zodResolver(passwordResetSchema),
@@ -36,15 +37,14 @@ const ResetPassword = () => {
         toast.error(data.error);
       }
       if (data?.success) {
-        toast.success(data?.success,{
-          action:{
-            label:"Open Email",
-            onClick:()=>{
+        toast.success(data?.success, {
+          action: {
+            label: "Open Email",
+            onClick: () => {
               window.open("https://mail.google.com/", "_blank");
-            }
-          }
+            },
+          },
         });
-        
       }
     },
   });
@@ -80,7 +80,7 @@ const ResetPassword = () => {
             {/* <Button size={"sm"} variant={"link"}>
               <Link href={"/auth/reset"}>Forgot Password</Link>
             </Button> */}
-            
+
             <Button
               className={cn(
                 "w-full my-4",
@@ -88,9 +88,7 @@ const ResetPassword = () => {
               )}
               disabled={status === "executing"}
             >
-              {status === "executing"
-                ? "Loading....."
-                : "Reset Password"}
+              {status === "executing" ? "Loading....." : "Reset Password"}
             </Button>
           </div>
         </form>
