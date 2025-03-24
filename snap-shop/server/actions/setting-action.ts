@@ -6,6 +6,8 @@ import { db } from "..";
 import { users } from "../schema";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { twoFactorSchema } from "@/types/twoFactor-schema";
+import { log } from "console";
 
 export const settingAction = actionClient
   .schema(profileSchema)
@@ -24,4 +26,25 @@ export const settingAction = actionClient
     } catch (error) {
       return { error: "Error updating profile" };
     }
+  });
+
+export const twoFactorAction = actionClient
+  .schema(twoFactorSchema)
+  .action(async ({ parsedInput: { isTwoFactorEnabled, email } }) => {
+    log(isTwoFactorEnabled);
+    const existingUser = await db.query.users.findFirst({
+      where: eq(users.email, email),
+    });
+    if (!existingUser) {
+      return { error: "Something went wrong" };
+    }
+
+    await db
+      .update(users)
+      .set({ isTwoFactorEnabled: isTwoFactorEnabled })
+      .where(eq(users.email, email));
+
+    revalidatePath("/dashboard/settings");
+
+    return { success: "Two factor disabled" };
   });

@@ -1,30 +1,110 @@
-import React from "react";
+"use client";
+
+import React, { useEffect } from "react";
 import SettingCard from "./settingCard";
 import { Card } from "../ui/card";
 import { Button } from "../ui/button";
 import { Check, X } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { twoFactorSchema } from "@/types/twoFactor-schema";
+import { useAction } from "next-safe-action/hooks";
+import { twoFactorAction } from "@/server/actions/setting-action";
+import { toast } from "sonner";
+import { z } from "zod";
+import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form";
+import { cn } from "@/lib/utils";
+import { Switch } from "../ui/switch";
+import { useForm } from "react-hook-form";
+import { log } from "console";
 
-const TwoFactor = () => {
+type TwoFactorProps = {
+  isTwoFactorEnabled: boolean;
+  email: string;
+};
+
+const TwoFactor = ({ isTwoFactorEnabled, email }: TwoFactorProps) => {
+  console.log("isTwoFactorEnabled", isTwoFactorEnabled, email);
+  const form = useForm({
+    resolver: zodResolver(twoFactorSchema),
+    defaultValues: {
+      isTwoFactorEnabled,
+      email,
+    },
+  });
+
+  const { execute, status, result } = useAction(twoFactorAction, {
+    onSuccess({ data }) {
+      console.log("I am login success------------ .", data);
+      form.reset();
+      if (data?.error) {
+        toast.error(data.error);
+      }
+      if (data?.success) {
+        toast.success(data?.success);
+      }
+    },
+  });
+
+  const onSubmit = (values: z.infer<typeof twoFactorSchema>) => {
+    console.log("I am towofactor form value", values);
+    const { isTwoFactorEnabled, email } = values;
+    console.log("isTwoFactorEnabled", isTwoFactorEnabled, email);
+    execute({ isTwoFactorEnabled, email });
+  };
+
+  useEffect(() => {
+    form.setValue("isTwoFactorEnabled", isTwoFactorEnabled);
+  }, [isTwoFactorEnabled, form]);
+
   return (
     <Card className=" flex items-center justify-between px-2 py-4 w-full">
       <div>TwoFactor</div>
-      <p>
-        {false ? (
-          <Button className=" flex gap-2 justify-center items-center">
-            <span>
-              <Check className="w-4 h-4" />
-            </span>
-            Enable
-          </Button>
-        ) : (
-          <Button className=" flex gap-2 items-center justify-center bg-red-500 text-white hover:bg-red-600">
-            <span>
-              <X className="w-4 h-4" />
-            </span>
-            Disable
-          </Button>
-        )}
-      </p>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <div>
+            <FormField
+              name="isTwoFactorEnabled"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem className=" flex items-end justify-center gap-4">
+                  <FormLabel>
+                    {isTwoFactorEnabled ? (
+                      <p>
+                        Two factor is{" "}
+                        <span className="text-green-500">enabled</span>
+                      </p>
+                    ) : (
+                      <p>
+                        Two factor is{" "}
+                        <span className="text-red-500">disabled</span>
+                      </p>
+                    )}
+                  </FormLabel>
+                  <FormControl>
+                    <Switch
+                      disabled={status === "executing"}
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <Button
+              type="submit"
+              className={cn(
+                "w-full my-4",
+                status === "executing" && "animate-pulse",
+                isTwoFactorEnabled ? "bg-red-500" : "bg-green-500"
+              )}
+              disabled={status === "executing"}
+            >
+              {isTwoFactorEnabled ? "Disable" : "Enable"}
+            </Button>
+          </div>
+        </form>
+      </Form>
     </Card>
   );
 };
