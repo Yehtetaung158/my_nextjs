@@ -2,7 +2,6 @@
 
 import { Session } from "next-auth";
 import React, { useState } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { UserRoundPen } from "lucide-react";
 import {
   Drawer,

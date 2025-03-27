@@ -1,10 +1,8 @@
 "use client";
 
 import React, { useEffect } from "react";
-import SettingCard from "./settingCard";
 import { Card } from "../ui/card";
 import { Button } from "../ui/button";
-import { Check, X } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { twoFactorSchema } from "@/types/twoFactor-schema";
 import { useAction } from "next-safe-action/hooks";
@@ -15,7 +13,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form";
 import { cn } from "@/lib/utils";
 import { Switch } from "../ui/switch";
 import { useForm } from "react-hook-form";
-import { log } from "console";
 
 type TwoFactorProps = {
   isTwoFactorEnabled: boolean;
@@ -23,7 +20,6 @@ type TwoFactorProps = {
 };
 
 const TwoFactor = ({ isTwoFactorEnabled, email }: TwoFactorProps) => {
-  console.log("isTwoFactorEnabled", isTwoFactorEnabled, email);
   const form = useForm({
     resolver: zodResolver(twoFactorSchema),
     defaultValues: {
@@ -34,7 +30,6 @@ const TwoFactor = ({ isTwoFactorEnabled, email }: TwoFactorProps) => {
 
   const { execute, status, result } = useAction(twoFactorAction, {
     onSuccess({ data }) {
-      console.log("I am login success------------ .", data);
       form.reset();
       if (data?.error) {
         toast.error(data.error);
@@ -46,9 +41,7 @@ const TwoFactor = ({ isTwoFactorEnabled, email }: TwoFactorProps) => {
   });
 
   const onSubmit = (values: z.infer<typeof twoFactorSchema>) => {
-    console.log("I am towofactor form value", values);
     const { isTwoFactorEnabled, email } = values;
-    console.log("isTwoFactorEnabled", isTwoFactorEnabled, email);
     execute({ isTwoFactorEnabled, email });
   };
 

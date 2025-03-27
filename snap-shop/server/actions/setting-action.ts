@@ -62,5 +62,7 @@ export const profileUpdateAction = actionClient
       return { error: "Something went wrong" };
     }
     await db.update(users).set({ image }).where(eq(users.email, email));
+    revalidatePath("/dashboard/settings");
+    revalidatePath("/");
     return { success: "Image uploaded successfully" };
   });

@@ -20,7 +20,6 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
 import { CheckCheck, Pencil, Save, X } from "lucide-react";
-import { is } from "drizzle-orm";
 
 type AvatarUploadFormProps = {
   image: string | null;
@@ -61,7 +60,6 @@ const AvatarUploadForm = ({ image, name, email }: AvatarUploadFormProps) => {
 
   const onSubmit = async (values: z.infer<typeof avatarUploadSchema>) => {
     const { image } = values;
-    console.log("I am onSubmit image", image);
     execute({ image, email });
   };
 
