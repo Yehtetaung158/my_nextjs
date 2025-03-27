@@ -7,9 +7,13 @@ import {
   primaryKey,
   integer,
   pgEnum,
+  serial,
+  real,
 } from "drizzle-orm/pg-core";
 import type { AdapterAccount } from "next-auth/adapters";
 import { createId } from "@paralleldrive/cuid2";
+import { desc } from "drizzle-orm";
+import { title } from "process";
 
 export const RoleEnum = pgEnum("role", ["user", "admin"]);
 
@@ -96,3 +100,11 @@ export const twoFactorToken = pgTable(
     compoundKey: primaryKey({ columns: [token.id, token.token] }),
   })
 );
+
+export const products = pgTable("product", {
+  id: serial("id").primaryKey(),
+  description: text("description").notNull(),
+  title: text("title").notNull(),
+  price: real("price").notNull(),
+  createdAt: timestamp("createAt", { mode: "date" }).defaultNow(),
+});
