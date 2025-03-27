@@ -25,6 +25,7 @@ import {
 import useMediaQuery from "@/hooks/useMediaQuery";
 import { Button } from "../ui/button";
 import ProfileForm from "./profile-form";
+import AvatarUploadForm from "./avatar-upload-form";
 
 type ProfileCardProps = {
   session: Session;
@@ -41,12 +42,7 @@ const ProfileCard = ({ session }: ProfileCardProps) => {
   return (
     <div className="flex px-2 py-4 items-center justify-between w-full">
       <div className="flex gap-2 items-center">
-        <Avatar className="w-14 h-14 bg-primary">
-          <AvatarImage src={session?.user?.image!} />
-          <AvatarFallback className="bg-primary text-white font-bold w-full h-full flex items-center justify-center">
-            {session?.user?.name?.slice(0, 2).toUpperCase()}
-          </AvatarFallback>
-        </Avatar>
+       <AvatarUploadForm image={session?.user?.image} name={session?.user?.name} email={session?.user?.email}/>
         <div>
           <h3>{session?.user?.name}</h3>
           <h3>{session?.user?.email}</h3>

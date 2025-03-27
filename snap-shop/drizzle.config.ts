@@ -5,11 +5,12 @@ dotenv.config({
   path: ".env.local",
 });
 
+
 export default defineConfig({
   dialect: "postgresql",
   schema: "./server/schema.ts",
-  out: "./server/db/migrations",
+  out: "./server/migration",
   dbCredentials: {
-    url: "postgresql://snap-shop_owner:npg_ljZTM6hYRe7a@ep-sweet-flower-a8pmb61j-pooler.eastus2.azure.neon.tech/snap-shop?sslmode=require",
+    url: process.env.DATABASE_URL!,
   },
 });

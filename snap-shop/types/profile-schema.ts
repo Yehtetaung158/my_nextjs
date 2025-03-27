@@ -6,3 +6,15 @@ export const profileSchema = z.object({
   }),
   email: z.string().email({ message: "Please enter a valid email address" }),
 });
+
+export const avatarUploadSchema = z.object({
+  image: z
+    .string()
+    .url({
+      message: "Please enter a valid image url.",
+    })
+    .optional(),
+  email: z.string().email({
+    message: "Please enter a valid email address.",
+  }),
+});

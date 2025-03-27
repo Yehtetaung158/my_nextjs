@@ -1,6 +1,6 @@
 "use server";
 
-import { profileSchema } from "@/types/profile-schema";
+import { avatarUploadSchema, profileSchema } from "@/types/profile-schema";
 import { actionClient } from "./safe-action";
 import { db } from "..";
 import { users } from "../schema";
@@ -47,4 +47,20 @@ export const twoFactorAction = actionClient
     revalidatePath("/dashboard/settings");
 
     return { success: "Two factor disabled" };
+  });
+
+export const profileUpdateAction = actionClient
+  .schema(avatarUploadSchema)
+  .action(async ({ parsedInput: { image, email } }) => {
+    if (!image) {
+      return { error: "Image is required" };
+    }
+    const existingUser = await db.query.users.findFirst({
+      where: eq(users.email, email),
+    });
+    if (!existingUser) {
+      return { error: "Something went wrong" };
+    }
+    await db.update(users).set({ image }).where(eq(users.email, email));
+    return { success: "Image uploaded successfully" };
   });
