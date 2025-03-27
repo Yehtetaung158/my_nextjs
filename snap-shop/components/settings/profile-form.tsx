@@ -66,9 +66,7 @@ const ProfileForm = ({ session, setIsOpen }: ProfileFormProps) => {
               )}
             />
 
-            <Button size={"sm"} variant={"link"}>
-              <Link href={"/auth/reset"}>Forgot Password</Link>
-            </Button>
+            
             <Button
               className={cn(
                 "w-full my-4",

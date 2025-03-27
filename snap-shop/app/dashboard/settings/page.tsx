@@ -1,5 +1,6 @@
 import ChangePassword from "@/components/settings/change-password";
 import ProfileCard from "@/components/settings/profile-card";
+import SettingLogOut from "@/components/settings/setting-logOut";
 import SettingCard from "@/components/settings/settingCard";
 import TwoFactor from "@/components/settings/twofactor";
 import { Card } from "@/components/ui/card";
@@ -28,6 +29,7 @@ const Settings = async () => {
                 isTwoFactorEnabled={session.user.isTwoFactorEnabled}
                 email={session.user.email}
               />
+              <SettingLogOut/>
             </>
           )}
         </div>
