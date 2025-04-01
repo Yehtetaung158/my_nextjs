@@ -13,6 +13,8 @@ const Settings = async () => {
   if (!session?.user) return redirect("/");
   console.log("session", session.user);
   return (
+    <>
+    <h1 className=" text-2xl font-bold">Account Settings</h1>
     <SettingCard
       formTitle="Settings"
       description="Update your profile and security settings"
@@ -35,6 +37,7 @@ const Settings = async () => {
         </div>
       </main>
     </SettingCard>
+    </>
   );
 };
 
