@@ -1,8 +1,12 @@
+"use server";
+
 import { actionClient } from "./safe-action";
 import { productSchema } from "@/types/product-schema";
 import { db } from "..";
 import { products } from "../schema";
 import { eq } from "drizzle-orm";
+import { z } from "zod";
+import { revalidatePath } from "next/cache";
 
 export const productCreateAndUpdateAction = actionClient
   .schema(productSchema)
@@ -52,3 +56,18 @@ export const getSingleProduct = async (id: number) => {
     };
   }
 };
+
+const deleteProductSchema = z.object({
+  id: z.number(),
+});
+export const deleteProduct = actionClient
+  .schema(deleteProductSchema)
+  .action(async ({ parsedInput: { id } }) => {
+    try {
+      await db.delete(products).where(eq(products.id, id));
+      revalidatePath("/dashboard/products");
+      return { success: "Product deleted successfully" };
+    } catch (error) {
+      return { error: "Something went wrong" };
+    }
+  });
