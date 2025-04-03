@@ -2,18 +2,16 @@ import { title } from "process";
 import * as z from "zod";
 
 export const productSchema = z.object({
-  id: z.number(),
-  title: z.string().min(2, {
-    message: "Title must be at least 2 characters long",
+  id: z.number().optional(),
+  title: z.string().min(4, {
+    message: "Please enter at least 4 characters.",
   }),
-  description: z.string().min(2, {
-    message: "Description must be at least 2 characters long",
+  description: z.string().min(40, {
+    message: "Please enter at least 40 characters.",
   }),
   price: z.coerce
-    .number({
-      invalid_type_error: "Price must be a number",
-    })
+    .number({ invalid_type_error: "Please enter a number." })
     .positive({
-      message: "Price must be a positive number",
+      message: "Please enter a positive number.",
     }),
 });

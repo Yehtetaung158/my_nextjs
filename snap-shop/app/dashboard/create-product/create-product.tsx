@@ -22,10 +22,16 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button"; // Added submit button
-import { Banknote } from "lucide-react";
+import { Banknote, Loader2, Plus } from "lucide-react";
 import Tiptap from "./Tiptap";
+import { productCreateAndUpdateAction } from "@/server/actions/product-action";
+import { useAction } from "next-safe-action/hooks";
+import { toast } from "sonner";
+import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 const CreateProductForm = () => {
+  const router=useRouter()
   // Removed async
   const form = useForm<z.infer<typeof productSchema>>({
     resolver: zodResolver(productSchema),
@@ -37,8 +43,27 @@ const CreateProductForm = () => {
   });
   console.log("form", form.getValues());
 
+  const { execute, status, result } = useAction(productCreateAndUpdateAction, {
+    onSuccess({ data }) {
+      console.log("I am login success------------ .", data);
+      form.reset();
+      if (data?.error) {
+        toast.error(data.error);
+      }
+      if (data?.success) {
+        toast.success(data?.success);
+        router.push("/dashboard/products")
+      }
+    },
+  });
+
+  console.log(" I am status", status, result);
+  console.log(" I am form error", form.formState.errors);
+
   const onSubmit = (values: z.infer<typeof productSchema>) => {
     console.log(values);
+    const { title, id, description, price } = values;
+    execute({ id, title, description, price });
   };
 
   return (
@@ -49,7 +74,7 @@ const CreateProductForm = () => {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form  onSubmit={form.handleSubmit(onSubmit)}className="space-y-4">
             {/* Title Field */}
             <FormField
               control={form.control}
@@ -105,9 +130,19 @@ const CreateProductForm = () => {
               )}
             />
 
-            {/* Submit Button */}
-            <Button type="submit" className="mt-4">
-              Create Product
+            <Button
+              className={cn(
+                "w-full my-4",
+                status === "executing" && "animate-pulse"
+              )}
+              disabled={status === "executing"}
+            >
+              {status === "executing" ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Plus className="mr-2 h-4 w-4" />
+              )}
+              {status === "executing" ? "Creating..." : "Create Product"}
             </Button>
           </form>
         </Form>

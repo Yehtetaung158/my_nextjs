@@ -1,0 +1,38 @@
+import { actionClient } from "./safe-action";
+import { productSchema } from "@/types/product-schema";
+import { db } from "..";
+import { products } from "../schema";
+import { eq } from "drizzle-orm";
+
+export const productCreateAndUpdateAction = actionClient
+  .schema(productSchema)
+  .action(async ({ parsedInput: { id, description, price, title } }) => {
+    console.log(id, description, price, title);
+    try {
+      console.log(id, title, description, price);
+      if (id) {
+        const existingProduct = await db.query.products.findFirst({
+          where: eq(products.id, id),
+        });
+
+        if (!existingProduct) {
+          return { error: "Product not found" };
+        }
+
+        await db
+          .update(products)
+          .set({ title, description, price })
+          .where(eq(products.id, id));
+        return { success: `${title} updated successfully` };
+      } else {
+        const product = await db
+          .insert(products)
+          .values({ title, description, price })
+          .returning();
+        return { success: `${product[0].title} created successfully` };
+      }
+    } catch (error) {
+      console.log(error);
+      return { error: "Something went wrong" };
+    }
+  });
