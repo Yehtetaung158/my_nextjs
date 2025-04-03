@@ -36,3 +36,19 @@ export const productCreateAndUpdateAction = actionClient
       return { error: "Something went wrong" };
     }
   });
+
+export const getSingleProduct = async (id: number) => {
+  try {
+    const product = await db.query.products.findFirst({
+      where: (products, { eq }) => eq(products.id, id),
+    });
+
+    if (!product) return { error: "Product not found" };
+    return { success: product };
+  } catch (error) {
+    console.log(error);
+    return {
+      error: error instanceof Error ? error.message : "Something went wrong",
+    };
+  }
+};

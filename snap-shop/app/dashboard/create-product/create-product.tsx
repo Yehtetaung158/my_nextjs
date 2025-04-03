@@ -18,20 +18,43 @@ import {
 import { Input } from "@/components/ui/input";
 import { productSchema } from "@/types/product-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button"; // Added submit button
 import { Banknote, Loader2, Plus } from "lucide-react";
 import Tiptap from "./Tiptap";
-import { productCreateAndUpdateAction } from "@/server/actions/product-action";
+import {
+  getSingleProduct,
+  productCreateAndUpdateAction,
+} from "@/server/actions/product-action";
 import { useAction } from "next-safe-action/hooks";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const CreateProductForm = () => {
-  const router=useRouter()
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const isEdit = searchParams.get("edit_id") || null;
+
+  const isProductExist = async (id: number) => {
+    if (isEdit) {
+      const response = await getSingleProduct(id);
+      if (response?.error) {
+        toast.error(response.error);
+        router.push("/dashboard/products");
+        return false;
+      }
+      if (response?.success) {
+        form.setValue("title", response?.success.title);
+        form.setValue("description", response?.success.description);
+        form.setValue("price", response?.success.price);
+        form.setValue("id", response?.success.id);
+      }
+    }
+  };
+
   // Removed async
   const form = useForm<z.infer<typeof productSchema>>({
     resolver: zodResolver(productSchema),
@@ -52,7 +75,7 @@ const CreateProductForm = () => {
       }
       if (data?.success) {
         toast.success(data?.success);
-        router.push("/dashboard/products")
+        router.push("/dashboard/products");
       }
     },
   });
@@ -66,6 +89,12 @@ const CreateProductForm = () => {
     execute({ id, title, description, price });
   };
 
+  useEffect(() => {
+    if (isEdit) {
+      isProductExist(Number(isEdit));
+    }
+  },[]);
+
   return (
     <Card>
       <CardHeader>
@@ -74,7 +103,7 @@ const CreateProductForm = () => {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form  onSubmit={form.handleSubmit(onSubmit)}className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             {/* Title Field */}
             <FormField
               control={form.control}

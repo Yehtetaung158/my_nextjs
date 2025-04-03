@@ -1,8 +1,15 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel } from "@/components/ui/dropdown-menu";
-import { DropdownMenu, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
+import {
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+} from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+} from "@radix-ui/react-dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import Image from "next/image";
@@ -77,11 +84,7 @@ export const columns: ColumnDef<Product>[] = [
     accessorKey: "action",
     header: "Action",
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("price"));
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount);
+      const product = row.original;
 
       return (
         <DropdownMenu>
@@ -94,13 +97,11 @@ export const columns: ColumnDef<Product>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem className="cursor-pointer text-primary focus:bg-primary/20 focus:text-primary font-medium duration-300">
-              {/* <Link href={`/dashboard/create-product?edit_id=${product.id}`}> */}
+              <Link href={`/dashboard/create-product?edit_id=${product.id}`}>
                 Edit Product
-              {/* </Link> */}
+              </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem
-              className="cursor-pointer text-red-600 focus:bg-red-200 focus:text-red-600 font-medium duration-300"
-            >
+            <DropdownMenuItem className="cursor-pointer text-red-600 focus:bg-red-200 focus:text-red-600 font-medium duration-300">
               Delete Product
             </DropdownMenuItem>
           </DropdownMenuContent>
