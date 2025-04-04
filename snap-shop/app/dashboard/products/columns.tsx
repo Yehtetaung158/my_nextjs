@@ -101,14 +101,14 @@ export const columns: ColumnDef<Product>[] = [
     accessorKey: "title",
     header: "title",
   },
-  {
-    accessorKey: "description",
-    header: "Description",
-    cell: ({ row }) => {
-      const description = row.getValue("description");
-      return <span className="text-left ">{JSON.stringify(description)}</span>;
-    },
-  },
+  // {
+  //   accessorKey: "description",
+  //   header: "Description",
+  //   cell: ({ row }) => {
+  //     const description = row.getValue("description");
+  //     return <span className="text-left ">{JSON.stringify(description)}</span>;
+  //   },
+  // },
   {
     accessorKey: "price",
     header: "Price",
