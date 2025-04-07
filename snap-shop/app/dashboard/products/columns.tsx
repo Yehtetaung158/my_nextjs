@@ -1,18 +1,20 @@
 "use client";
 
+import VariantsDialog from "@/components/products/variants-dialog";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
+import { VariantsWithImagesTags } from "@/lib/infer-types";
 import { deleteProduct } from "@/server/actions/product-action";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
 } from "@radix-ui/react-dropdown-menu";
 import { ColumnDef, Row } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
+import { Circle, CirclePlus, MoreHorizontal } from "lucide-react";
 import { useAction } from "next-safe-action/hooks";
 import Image from "next/image";
 import Link from "next/link";
@@ -23,10 +25,10 @@ import { toast } from "sonner";
 export type Product = {
   id: number;
   price: number;
-  //   status: "pending" | "processing" | "success" | "failed"
   title: string;
   description: string;
   imgUrl: string;
+  variants: VariantsWithImagesTags[];
 };
 
 const ActionsCell = (row: Row<Product>) => {
@@ -96,6 +98,23 @@ export const columns: ColumnDef<Product>[] = [
   {
     accessorKey: "variants",
     header: "Variants",
+    cell: ({ row }) => {
+      const variants = row.getValue("variants") as VariantsWithImagesTags[];
+      return (
+        <div className="text-left ">
+          {variants.map((variant) => {
+            return (
+              <div key={variant.id}>
+                <Circle className={`text-${variant.color}`} />
+              </div>
+            );
+          })}
+          <VariantsDialog editMode={false}>
+            <CirclePlus className="mr-2 h-4 w-4" />
+          </VariantsDialog>
+        </div>
+      );
+    },
   },
   {
     accessorKey: "title",
