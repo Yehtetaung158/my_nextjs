@@ -21,6 +21,15 @@ export const ourFileRouter = {
       // This code RUNS ON YOUR SERVER after upload
       console.log("file url", file.ufsUrl);
     }),
+  variantImagesUploader: f({
+    image: {
+      maxFileSize: "4MB",
+      maxFileCount: 10,
+    },
+  }).onUploadComplete(async ({ metadata, file }) => {
+    // This code RUNS ON YOUR SERVER after upload
+    console.log("file url", file.ufsUrl);
+  }),
 } satisfies FileRouter;
 
 export type OurFileRouter = typeof ourFileRouter;
