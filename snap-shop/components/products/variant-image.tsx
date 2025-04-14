@@ -57,17 +57,18 @@ const VariantImage = () => {
                 }}
                 onClientUploadComplete={(data) => {
                   const variantImages = getValues("variantImages");
+                  console.log("Client upload complete:", variantImages);
                   variantImages.forEach((variantImage, index) => {
                     if (variantImage.url.startsWith("blob:")) {
                       const image = data.find(
-                        (image) => image.name === variantImage.name
+                        (i) => i.name === variantImage.name
                       );
                       if (image) {
                         update(index, {
-                          url: variantImage.url,
-                          name: variantImage.name,
-                          size: variantImage.size,
-                          key: variantImage.key,
+                          url: image.url,
+                          name: image.name,
+                          size: image.size,
+                          key: image.key,
                         });
                       }
                     }
@@ -84,8 +85,8 @@ const VariantImage = () => {
           <div
             key={index}
             className={cn(
-              "relative w-20 h-20 overflow-hidden rounded-md border border-gray-300 shadow-sm",
-            //   field.url.startsWith("blob:") ? "animate-pulse" : ""
+              "relative w-20 h-20 overflow-hidden rounded-md border border-gray-300 shadow-sm"
+              //   field.url.startsWith("blob:") ? "animate-pulse" : ""
             )}
           >
             <button

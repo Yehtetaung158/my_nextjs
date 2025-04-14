@@ -27,6 +27,9 @@ import {
 import { Input } from "@/components/ui/input";
 import TagInput from "./tags-input";
 import VariantImage from "./variant-image";
+import { useAction } from "next-safe-action/hooks";
+import { toast } from "sonner";
+import { variantsAction } from "@/server/actions/variants-action";
 
 type VariantsDialogProps = {
   children: React.ReactNode;
@@ -54,8 +57,32 @@ const VariantsDialog = ({
       editMode,
     },
   });
+
+  const { execute, status, result } = useAction(variantsAction, {
+    onSuccess({ data }) {
+      console.log("I am login success------------ .", data);
+      if (data?.error) {
+        toast.error(data.error);
+        form.reset();
+      }
+      if (data?.success) {
+        toast.success(data?.success);
+      }
+    },
+  });
+
   function onSubmit(values: z.infer<typeof VariantSchema>) {
     console.log(values);
+    const { color, tags, id, variantImages, productID, productType } = values;
+    execute({
+      color,
+      tags,
+      id,
+      variantImages,
+      productID,
+      productType,
+      editMode,
+    });
   }
   return (
     <Dialog>

@@ -109,7 +109,7 @@ export const columns: ColumnDef<Product>[] = [
               </div>
             );
           })}
-          <VariantsDialog editMode={false}>
+          <VariantsDialog editMode={false} productId={row.original.id}>
             <CirclePlus className="mr-2 h-4 w-4" />
           </VariantsDialog>
         </div>
