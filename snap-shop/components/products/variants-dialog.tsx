@@ -1,7 +1,7 @@
 "use client";
 
 import { VariantsWithImagesTags } from "@/lib/infer-types";
-import React from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -13,7 +13,7 @@ import {
 import { VariantSchema } from "@/types/varant-schema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { set, z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -44,6 +44,9 @@ const VariantsDialog = ({
   productId,
   variantId,
 }: VariantsDialogProps) => {
+
+  const [open, setOpen] = useState(false);
+
   // 1. Define your form.
   const form = useForm<z.infer<typeof VariantSchema>>({
     resolver: zodResolver(VariantSchema),
@@ -60,6 +63,7 @@ const VariantsDialog = ({
 
   const { execute, status, result } = useAction(variantsAction, {
     onSuccess({ data }) {
+      setOpen(false);
       console.log("I am login success------------ .", data);
       if (data?.error) {
         toast.error(data.error);
@@ -85,7 +89,7 @@ const VariantsDialog = ({
     });
   }
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className=" max-h-screen overflow-y-auto">
         <DialogHeader>

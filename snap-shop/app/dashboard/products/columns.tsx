@@ -101,11 +101,11 @@ export const columns: ColumnDef<Product>[] = [
     cell: ({ row }) => {
       const variants = row.getValue("variants") as VariantsWithImagesTags[];
       return (
-        <div className="text-left ">
+        <div className="text-left flex items-center gap-2">
           {variants.map((variant) => {
             return (
-              <div key={variant.id}>
-                <Circle className={`text-${variant.color}`} />
+              <div key={variant.id} className="flex items-center gap-2">
+                <div className="w-4 h-4 rounded-full overflow-hidden" style={{backgroundColor: variant.color}}></div>
               </div>
             );
           })}
