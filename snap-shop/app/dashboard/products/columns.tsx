@@ -102,11 +102,19 @@ export const columns: ColumnDef<Product>[] = [
       const variants = row.getValue("variants") as VariantsWithImagesTags[];
       return (
         <div className="text-left flex items-center gap-2">
-          {variants.map((variant) => {
+          {variants.map((v, i) => {
             return (
-              <div key={variant.id} className="flex items-center gap-2">
-                <div className="w-4 h-4 rounded-full overflow-hidden" style={{backgroundColor: variant.color}}></div>
-              </div>
+              <VariantsDialog
+                editMode={true}
+                productId={row.original.id}
+                variants={v}
+                key={i}
+              >
+                <div
+                  className="w-5 h-5 rounded-full"
+                  style={{ backgroundColor: v.color }}
+                />
+              </VariantsDialog>
             );
           })}
           <VariantsDialog editMode={false} productId={row.original.id}>

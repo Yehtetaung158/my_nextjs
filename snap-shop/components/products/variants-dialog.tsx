@@ -1,7 +1,7 @@
 "use client";
 
 import { VariantsWithImagesTags } from "@/lib/infer-types";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -30,12 +30,14 @@ import VariantImage from "./variant-image";
 import { useAction } from "next-safe-action/hooks";
 import { toast } from "sonner";
 import { variantsAction } from "@/server/actions/variants-action";
+import { variantsTags } from "@/server/schema";
 
 type VariantsDialogProps = {
   children: React.ReactNode;
   editMode: boolean;
   productId?: number;
   variantId?: VariantsWithImagesTags;
+  variants?: VariantsWithImagesTags;
 };
 
 const VariantsDialog = ({
@@ -43,9 +45,34 @@ const VariantsDialog = ({
   editMode,
   productId,
   variantId,
+  variants,
 }: VariantsDialogProps) => {
-
   const [open, setOpen] = useState(false);
+
+  const getOldData = () => {
+    if (editMode && variants) {
+      form.setValue("editMode", true);
+      form.setValue("id", variants.id);
+      form.setValue("color", variants.color);
+      form.setValue("tags", variants.variantsTags.map((tag) => tag.tag));
+      form.setValue(
+        "variantImages",
+        variants?.variantImages.map((img) => {
+          return {
+            url: img.image_url,
+            size: Number(img.size),
+            name: img.name,
+          };
+        })
+      );
+      form.setValue("productType", variants.productType);
+      form.setValue("productID", variants.productId);
+    }
+  };
+
+  useEffect(() => {
+    getOldData();
+  }, []);
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof VariantSchema>>({
@@ -141,7 +168,7 @@ const VariantsDialog = ({
               )}
             />
             <VariantImage />
-            <Button type="submit">
+            <Button type="submit" disabled={status === "executing" || !form.formState.isValid}>
               {editMode
                 ? "Update product's variant"
                 : "Create product's variant"}

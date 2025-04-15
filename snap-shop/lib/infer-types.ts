@@ -28,7 +28,7 @@ import type {
   
   export type VariantsWithImagesTags = InferResultType<
     "productVariants",
-    { variantImages: true; variantTags: true }
+    { variantImages: true; variantsTags: true }
   >
   
   export type ProductsWithVariants = InferResultType<

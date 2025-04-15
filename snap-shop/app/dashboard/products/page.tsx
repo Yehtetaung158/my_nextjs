@@ -6,27 +6,24 @@ import placeHolerImg from "@/public/istockphoto-1147544807-612x612.jpg";
 import { columns } from "./columns";
 
 const Products = async () => {
+  // const products = await db.query.products.findMany({
+  //   with: {
+  //     productVariants: {
+  //       with: {
+  //         variantImages: true,
+  //         variantsTags: true,
+  //       },
+  //     },
+  //   },
+  //   orderBy: (products, { asc }) => [asc(products.id)],
+  // });
+
   const products = await db.query.products.findMany({
     with: {
-      productVariants: {
-        with: {
-          variantImages: true,
-          variantsTags: true,
-        },
-      },
+      productVariants: { with: { variantImages: true, variantsTags: true } },
     },
-    orderBy: (products, { asc }) => [asc(products.id)],
+    orderBy: (products, { desc }) => [desc(products.id)],
   });
-
-  // const productData = products.map((product) => ({
-
-  //   id: product.id,
-  //   title: product.title,
-  //   description: product.description,
-  //   price: product.price,
-  //   imgUrl: placeHolerImg.src,
-  //   variants: [],
-  // }));
 
   const productData = products.map((product) => {
     if (product.productVariants.length === 0) {

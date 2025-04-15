@@ -4,6 +4,7 @@ import { actionClient } from "./safe-action";
 import { db } from "..";
 import { productVariants, variantImages, variantsTags } from "../schema";
 import { revalidatePath } from "next/cache";
+import { eq } from "drizzle-orm";
 
 export const variantsAction = actionClient
   .schema(VariantSchema)
@@ -21,7 +22,42 @@ export const variantsAction = actionClient
     }) => {
       try {
         if (editMode && id) {
-          console.log("update variant", id);
+          const editVariant = await db
+            .update(productVariants)
+            .set({
+              color,
+              productType,
+              updatedAt: new Date(),
+            })
+            .where(eq(productVariants.id, id))
+            .returning();
+          await db
+            .delete(variantsTags)
+            .where(eq(variantsTags.variantId, editVariant[0].id));
+          await db.insert(variantsTags).values(
+            tags.map((tag) => {
+              return {
+                tag,
+                variantId: editVariant[0].id,
+              };
+            })
+          );
+          await db
+            .delete(variantImages)
+            .where(eq(variantImages.variantId, editVariant[0].id));
+          await db.insert(variantImages).values(
+            vImages.map((img, index) => {
+              return {
+                image_url: img.url,
+                size: img.size.toString(),
+                name: img.name,
+                variantId: editVariant[0].id,
+                order: index,
+              };
+            })
+          );
+          revalidatePath("/dashboard/products");
+          return { success: `Variants updated.` };
         }
         if (!editMode) {
           const variant = await db
