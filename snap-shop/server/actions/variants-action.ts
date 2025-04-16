@@ -5,6 +5,7 @@ import { db } from "..";
 import { productVariants, variantImages, variantsTags } from "../schema";
 import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
+import { z } from "zod";
 
 export const variantsAction = actionClient
   .schema(VariantSchema)
@@ -97,3 +98,16 @@ export const variantsAction = actionClient
       }
     }
   );
+
+export const deleteVariantAction = actionClient
+  .schema(z.object({ id: z.number() }))
+  .action(async ({ parsedInput: { id } }) => {
+    try {
+      await db.delete(productVariants).where(eq(productVariants.id, id));
+      revalidatePath("/dashboard/products");
+      return { success: "Variant deleted successfully" };
+    } catch (error) {
+      console.error(error);
+      return { error: "Error deleting variant" };
+    }
+  });

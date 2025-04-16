@@ -29,7 +29,10 @@ import TagInput from "./tags-input";
 import VariantImage from "./variant-image";
 import { useAction } from "next-safe-action/hooks";
 import { toast } from "sonner";
-import { variantsAction } from "@/server/actions/variants-action";
+import {
+  deleteVariantAction,
+  variantsAction,
+} from "@/server/actions/variants-action";
 import { variantsTags } from "@/server/schema";
 
 type VariantsDialogProps = {
@@ -54,7 +57,10 @@ const VariantsDialog = ({
       form.setValue("editMode", true);
       form.setValue("id", variants.id);
       form.setValue("color", variants.color);
-      form.setValue("tags", variants.variantsTags.map((tag) => tag.tag));
+      form.setValue(
+        "tags",
+        variants.variantsTags.map((tag) => tag.tag)
+      );
       form.setValue(
         "variantImages",
         variants?.variantImages.map((img) => {
@@ -91,7 +97,19 @@ const VariantsDialog = ({
   const { execute, status, result } = useAction(variantsAction, {
     onSuccess({ data }) {
       setOpen(false);
-      console.log("I am login success------------ .", data);
+      if (data?.error) {
+        toast.error(data.error);
+        form.reset();
+      }
+      if (data?.success) {
+        toast.success(data?.success);
+      }
+    },
+  });
+
+  const deleteVariant = useAction(deleteVariantAction, {
+    onSuccess({ data }) {
+      setOpen(false);
       if (data?.error) {
         toast.error(data.error);
         form.reset();
@@ -168,11 +186,30 @@ const VariantsDialog = ({
               )}
             />
             <VariantImage />
-            <Button type="submit" disabled={status === "executing" || !form.formState.isValid}>
-              {editMode
-                ? "Update product's variant"
-                : "Create product's variant"}
-            </Button>
+            <div className="flex gap-2 w-full items-center justify-between">
+              <Button
+                type="submit"
+                disabled={status === "executing" || !form.formState.isValid}
+              >
+                {editMode
+                  ? "Update product's variant"
+                  : "Create product's variant"}
+              </Button>
+              {editMode && (
+                <Button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setOpen(false);
+                    deleteVariant.execute({ id: variants?.id! });
+                  }}
+                  className=" bg-red-500"
+                  type="button"
+                  disabled={status === "executing" || !form.formState.isValid}
+                >
+                  Delete product's variant"
+                </Button>
+              )}
+            </div>
           </form>
         </Form>
       </DialogContent>
