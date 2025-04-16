@@ -84,22 +84,29 @@ const VariantsDialog = ({
   const form = useForm<z.infer<typeof VariantSchema>>({
     resolver: zodResolver(VariantSchema),
     defaultValues: {
-      tags: [],
+      tags: [
+        "iPhone",
+        "iPad",
+        "MacBook",
+        "Apple Watch",
+        "Accessories",
+        "Covers",
+      ],
       color: "#000",
       variantImages: [],
       productID: productId,
       id: undefined,
-      productType: "Black",
+      productType: "",
       editMode,
     },
   });
 
   const { execute, status, result } = useAction(variantsAction, {
     onSuccess({ data }) {
+      form.reset();
       setOpen(false);
       if (data?.error) {
         toast.error(data.error);
-        form.reset();
       }
       if (data?.success) {
         toast.success(data?.success);
@@ -109,10 +116,10 @@ const VariantsDialog = ({
 
   const deleteVariant = useAction(deleteVariantAction, {
     onSuccess({ data }) {
+      form.reset();
       setOpen(false);
       if (data?.error) {
         toast.error(data.error);
-        form.reset();
       }
       if (data?.success) {
         toast.success(data?.success);
