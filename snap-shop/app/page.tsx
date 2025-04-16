@@ -1,14 +1,26 @@
 // import { Button } from '@/components/ui/button'
+"use client";
 
-import React from 'react'
+import Products from "@/components/products";
+import { db } from "@/server";
+import { productVariants } from "@/server/schema";
+import React from "react";
 
-const page = () => {
+export default async function Home() {
+
+const productWithVariants= await db.query.productVariants.findMany({
+  with:{
+    variantImages:true,
+    product:true,
+    variantsTags:true,
+  },
+  orderBy:(productVariants,{desc})=>[desc(productVariants.id)]
+})
+
   return (
     <main>
-      {/* <Button>Click me</Button> */}
-      <h1>I am page</h1>
+      <h2>Nav</h2>
+      <Products productWithVariants={productWithVariants}/>
     </main>
-  )
+  );
 }
-
-export default page
