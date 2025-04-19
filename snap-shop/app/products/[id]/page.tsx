@@ -1,3 +1,4 @@
+import AddToCart from "@/components/cart/add-to-cart";
 import ImageSlider from "@/components/products/image-slider";
 import VariantPicker from "@/components/products/variantPicker";
 import { db } from "@/server";
@@ -86,7 +87,8 @@ const DetailPage = async ({ params }: DetailProductProps) => {
                 />
               ))}
             </div>
-            {/* <AddToCart /> */}
+            <AddToCart />
+
           </div>
         </div>
       )}

@@ -1,5 +1,3 @@
-// import { Button } from '@/components/ui/button'
-"use client";
 
 import Products from "@/components/products";
 import { db } from "@/server";
