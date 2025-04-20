@@ -3,8 +3,10 @@ import React, { useState } from "react";
 import { Button } from "../ui/button";
 import { Minus, Plus } from "lucide-react";
 import { redirect, useSearchParams } from "next/navigation";
+import { useCartStore } from "@/store/cart-store";
 
 const AddToCart = () => {
+  const addToCart = useCartStore((state) => state.addToCart);
   const [quantity, setQuantity] = useState<number>(1);
   const searchParams = useSearchParams();
   const variantId = searchParams.get("vid");
@@ -17,7 +19,15 @@ const AddToCart = () => {
     return redirect("/");
   }
 
-  
+  const addToCartHandler = () => {
+    addToCart({
+      id: Number(productId),
+      name: title,
+      price: Number(price),
+      image,
+      variants: { variantId: Number(variantId), quantity },
+    });
+  };
 
   return (
     <>
@@ -39,7 +49,11 @@ const AddToCart = () => {
           <Plus size={16} />
         </Button>
       </div>
-      <Button className="w-full" size={"lg"} onClick={() => {console.log(quantity)}}>
+      <Button
+        className="w-full"
+        size={"lg"}
+        onClick={addToCartHandler}
+      >
         Add to cart
       </Button>
     </>

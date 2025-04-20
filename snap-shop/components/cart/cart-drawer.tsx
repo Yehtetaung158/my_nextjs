@@ -6,6 +6,7 @@ import {
     DrawerTitle,
     DrawerTrigger,
   } from "@/components/ui/drawer";
+import CartItems from "./cart-items";
  
   type CartDrawerProps = {
     children: React.ReactNode;
@@ -22,6 +23,7 @@ import {
                 thank for shopping with icore.
               </DrawerDescription>
             </DrawerHeader>
+            <CartItems/>
           </DrawerContent>
         </Drawer>
       </>
