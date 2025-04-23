@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export type Variant = {
   variantId: number;
@@ -19,57 +20,68 @@ export type cartType = {
   reduceQuantity: (item: cartItem) => void;
 };
 
-export const useCartStore = create<cartType>((set) => ({
-  cart: [],
-  addToCart: (item) =>
-    set((state) => {
-      const existingItem = state.cart.find(
-        (cartItem) => cartItem.id === item.id
-      );
-      if (existingItem) {
-        const updatedCart = state.cart.map((cartItem) => {
-          if (cartItem.variants.variantId === item.variants.variantId) {
+export const useCartStore = create(
+  persist<cartType>(
+    (set) => ({
+      cart: [],
+      addToCart: (item) =>
+        set((state) => {
+          const existingItem = state.cart.find(
+            (cartItem) => cartItem.id === item.id
+          );
+          if (existingItem) {
+            const updatedCart = state.cart.map((cartItem) => {
+              if (cartItem.variants.variantId === item.variants.variantId) {
+                return {
+                  ...cartItem,
+                  variants: {
+                    ...cartItem.variants,
+                    quantity:
+                      cartItem.variants.quantity + item.variants.quantity,
+                  },
+                };
+              }
+              return cartItem;
+            });
             return {
-              ...cartItem,
-              variants: {
-                ...cartItem.variants,
-                quantity: cartItem.variants.quantity + item.variants.quantity,
-              },
+              cart: updatedCart,
+            };
+          } else {
+            return {
+              cart: [
+                ...state.cart,
+                {
+                  ...item,
+                  variants: {
+                    ...item.variants,
+                    quantity: item.variants.quantity,
+                  },
+                },
+              ],
             };
           }
-          return cartItem;
-        });
-        return {
-          cart: updatedCart,
-        };
-      } else {
-        return {
-          cart: [
-            ...state.cart,
-            {
-              ...item,
-              variants: { ...item.variants, quantity: item.variants.quantity },
-            },
-          ],
-        };
-      }
-    }),
-  reduceQuantity: (item) =>
-    set((state) => {
-      const updatedCart = state.cart.map((cartItem) => {
-        if (cartItem.variants.variantId === item.variants.variantId) {
+        }),
+      reduceQuantity: (item) =>
+        set((state) => {
+          const updatedCart = state.cart.map((cartItem) => {
+            if (cartItem.variants.variantId === item.variants.variantId) {
+              return {
+                ...cartItem,
+                variants: {
+                  ...cartItem.variants,
+                  quantity: cartItem.variants.quantity - 1,
+                },
+              };
+            }
+            return cartItem;
+          });
           return {
-            ...cartItem,
-            variants: {
-              ...cartItem.variants,
-              quantity: cartItem.variants.quantity - 1,
-            },
+            cart: updatedCart.filter(
+              (cartItem) => cartItem.variants.quantity > 0
+            ),
           };
-        }
-        return cartItem;
-      });
-      return {
-        cart: updatedCart.filter((cartItem) => cartItem.variants.quantity > 0),
-      };
+        }),
     }),
-}));
+    { name: "cart-storage" }
+  )
+);
