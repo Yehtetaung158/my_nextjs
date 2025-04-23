@@ -21,7 +21,7 @@ const CartItems = () => {
     const cart = useCartStore((state) => state.cart);
   const removeFromCart = useCartStore((state) => state.reduceQuantity);
   const addToCart = useCartStore((state) => state.addToCart);
-//   const setCartPosition = useCartStore((state) => state.setCartPosition);
+  const setCartPosition = useCartStore((state) => state.setCartPosition);
   return (
     <main className="lg:w-1/2 mx-auto">
       {cart.length === 0 ? (
@@ -111,7 +111,7 @@ const CartItems = () => {
             size={"lg"}
             className="w-full mt-2 mb-6"
             onClick={() => {
-            //   setCartPosition("Checkout");
+              setCartPosition("Checkout");
             }}
           >
             Place Order

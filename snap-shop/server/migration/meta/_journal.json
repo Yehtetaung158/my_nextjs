@@ -15,6 +15,13 @@
       "when": 1744043368404,
       "tag": "0001_shocking_dracula",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1745417234882,
+      "tag": "0002_volatile_mentor",
+      "breakpoints": true
     }
   ]
 }
