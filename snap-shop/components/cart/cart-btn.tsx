@@ -12,7 +12,7 @@ const CartBtn = () => {
       <div className="relative">
         <ShoppingCart size={24} strokeWidth="3" />
         <span className="absolute top-[-8px] right-[-8px] inline-flex items-center justify-center w-5 h-5 text-xs font-bold leading-none text-white bg-primary rounded-full">
-          {cartCount > 99 ? "99+" : cartCount}
+          {cartCount && <>{cartCount > 99 ? "99+" : cartCount}</>}
         </span>
       </div>
     </CartDrawer>

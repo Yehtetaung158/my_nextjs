@@ -43,7 +43,7 @@ const CartItems = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {cart.map((citem) => (
+              {cart?.map((citem) => (
                 <TableRow key={citem.id}>
                   <TableCell className="font-medium">{citem.name}</TableCell>
                   <TableCell>

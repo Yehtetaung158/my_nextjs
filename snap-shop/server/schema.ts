@@ -29,6 +29,7 @@ export const users = pgTable("user", {
   image: text("image"),
   isTwoFactorEnabled: boolean("isTwoFactorEnabled").default(false),
   role: RoleEnum("role").default("user"),
+  customerId: text("customerId"),
 });
 
 export const accounts = pgTable(
@@ -177,12 +178,10 @@ export const variantsTagsRelations = relations(variantsTags, ({ one }) => ({
   }),
 }));
 
-
-
 //order table
 export const userRelations = relations(users, ({ many }) => ({
   orders: many(orders, { relationName: "user_orders" }),
-}))
+}));
 
 export const orders = pgTable("orders", {
   id: serial("id").primaryKey(),
@@ -193,7 +192,7 @@ export const orders = pgTable("orders", {
   status: text("status").notNull(),
   created: timestamp("created").defaultNow(),
   receiptURL: text("receiptURL"),
-})
+});
 
 export const ordersRelations = relations(orders, ({ one, many }) => ({
   user: one(users, {
@@ -202,7 +201,7 @@ export const ordersRelations = relations(orders, ({ one, many }) => ({
     relationName: "user_orders",
   }),
   orderProduct: many(orderProduct, { relationName: "orderProduct" }),
-}))
+}));
 
 export const orderProduct = pgTable("orderProduct", {
   id: serial("id").primaryKey(),
@@ -213,4 +212,28 @@ export const orderProduct = pgTable("orderProduct", {
   productID: serial("productID")
     .notNull()
     .references(() => products.id, { onDelete: "cascade" }),
-})
+  orderID: serial("orderID")
+    .notNull()
+    .references(() => orders.id, { onDelete: "cascade" }),
+});
+
+// for stripe
+// customerID: text("customerID"),
+
+export const orderProductRelations = relations(orderProduct, ({ one }) => ({
+  order: one(orders, {
+    fields: [orderProduct.orderID],
+    references: [orders.id],
+    relationName: "orderProduct",
+  }),
+  product: one(products, {
+    fields: [orderProduct.productID],
+    references: [products.id],
+    relationName: "products",
+  }),
+  productVariants: one(productVariants, {
+    fields: [orderProduct.productVariantID],
+    references: [productVariants.id],
+    relationName: "productVariants",
+  }),
+}));

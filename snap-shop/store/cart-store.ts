@@ -18,8 +18,9 @@ export type cartType = {
   cart: cartItem[];
   addToCart: (item: cartItem) => void;
   reduceQuantity: (item: cartItem) => void;
-  cartPosition:"Order" | "Checkout" | "Success";
+  cartPosition: "Order" | "Checkout" | "Success";
   setCartPosition: (position: "Order" | "Checkout" | "Success") => void;
+  clearCart: () => void;
 };
 
 export const useCartStore = create(
@@ -27,6 +28,12 @@ export const useCartStore = create(
     (set) => ({
       cart: [],
       cartPosition: "Order",
+      // clearCart: () => set(() => ({ cart: [] })),
+      clearCart: () =>
+        set(() => ({
+          cart: [],
+          // cartPosition: "Success",
+        })),
       setCartPosition: (position) => set({ cartPosition: position }),
       addToCart: (item) =>
         set((state) => {

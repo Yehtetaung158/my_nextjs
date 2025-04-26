@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Drawer,
   DrawerContent,
@@ -9,12 +11,15 @@ import {
 import CartItems from "./cart-items";
 import { useCartStore } from "@/store/cart-store";
 import CartStatus from "./cart-status";
+import Payment from "./payment";
+import Success from "./success";
 
 type CartDrawerProps = {
   children: React.ReactNode;
 };
 const CartDrawer = ({ children }: CartDrawerProps) => {
   const cartPosition = useCartStore((state) => state.cartPosition);
+  console.log("cartPosition", cartPosition);
   return (
     <>
       <Drawer>
@@ -28,8 +33,8 @@ const CartDrawer = ({ children }: CartDrawerProps) => {
             <CartStatus />
           </DrawerHeader>
           {cartPosition === "Order" && <CartItems />}
-          {cartPosition === "Checkout" && <p>Checkout</p>}
-          {cartPosition === "Success" && <p>Success</p>}
+          {cartPosition === "Checkout" && <Payment />}
+          {cartPosition === "Success" && <Success />}
         </DrawerContent>
       </Drawer>
     </>

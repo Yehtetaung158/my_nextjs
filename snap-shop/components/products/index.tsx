@@ -28,10 +28,11 @@ const Products = ({ productWithVariants }: productProps) => {
               {p.product.title.substring(0, 26) + "..."}
             </h3>
             <p>
-              {p.product.price.toLocaleString("USD", {
+              <span>{p.product.price.toLocaleString("USD", {
                 currency: "USD",
                 minimumFractionDigits: 2,
-              })}
+              })}</span>
+              <span className="ml-2 font-bold">USD</span>
             </p>
           </Link>
         );
