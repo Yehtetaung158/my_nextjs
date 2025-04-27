@@ -1,10 +1,15 @@
+// "use client";
+
 import AnalyticCard from "@/components/analytics/analytic-card";
-import { analytics } from "@/server/actions/analytics";
+import { analytics, weeklyAnalytics } from "@/server/actions/analytics";
 import React from "react";
 import { Box, Clock, Package, Users } from "lucide-react";
+import AnalyticChart from "@/components/analytics/analytic-chart";
 
 const Analytic = async () => {
   const analyticsData = await analytics();
+  const weeklyAnalyticsData = await weeklyAnalytics();
+  console.log("weeklyAnalyticsData", weeklyAnalyticsData);
   return (
     <main>
       {analyticsData && (
@@ -35,7 +40,7 @@ const Analytic = async () => {
           />
         </div>
       )}
-      {/* <AnalyticChart data={weeklyAnalyticsData!} /> */}
+      <AnalyticChart data={weeklyAnalyticsData!} />
     </main>
   );
 };

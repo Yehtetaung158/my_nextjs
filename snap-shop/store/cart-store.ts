@@ -21,6 +21,8 @@ export type cartType = {
   cartPosition: "Order" | "Checkout" | "Success";
   setCartPosition: (position: "Order" | "Checkout" | "Success") => void;
   clearCart: () => void;
+  isSearchOpen: boolean;
+  setIsSearchOpen: (isOpen: boolean) => void;
 };
 
 export const useCartStore = create(
@@ -28,6 +30,8 @@ export const useCartStore = create(
     (set) => ({
       cart: [],
       cartPosition: "Order",
+      isSearchOpen: false,
+      setIsSearchOpen: (isOpen) => set({ isSearchOpen: isOpen }),
       // clearCart: () => set(() => ({ cart: [] })),
       clearCart: () =>
         set(() => ({
