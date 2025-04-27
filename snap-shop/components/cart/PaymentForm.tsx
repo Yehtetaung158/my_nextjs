@@ -21,12 +21,11 @@ const PaymentForm = ({ totalPrice }: PaymentFormProps) => {
   console.log("cartPosition", cartPosition);
   const cart = useCartStore((state) => state.cart);
   const setCartPosition = useCartStore((state) => state.setCartPosition);
-  const clearCart = useCartStore((state)=> state.clearCart);
+  const clearCart = useCartStore((state) => state.clearCart);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const stripe = useStripe();
   const elements = useElements();
-
 
   useEffect(() => {
     if (cartPosition === "Success" && cart.length === 0) {
@@ -78,7 +77,6 @@ const PaymentForm = ({ totalPrice }: PaymentFormProps) => {
       })),
     });
 
-
     if (response?.data?.error) {
       setErrorMsg(response?.data?.error);
       setLoading(false);
@@ -91,7 +89,8 @@ const PaymentForm = ({ totalPrice }: PaymentFormProps) => {
         clientSecret: response.data.success.clientSecretId!,
         redirect: "if_required",
         confirmParams: {
-          return_url: "http://localhost:3000/success",
+          // return_url: process.env.STRIPE_SUCCESS_URL!,
+          return_url: `http://localhost:3000/cart/success`,
           receipt_email: response.data.success.user_email,
         },
       });
