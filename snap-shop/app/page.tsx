@@ -1,5 +1,6 @@
 import Products from "@/components/products";
 import SearchBox from "@/components/products/search-box";
+import TagFilter from "@/components/products/tag-filter";
 import { db } from "@/server";
 import React from "react";
 
@@ -15,9 +16,8 @@ export default async function Home() {
 
   return (
     <main className=" relative">
-      <div >
       <SearchBox productWithVariants={productWithVariants} />
-      </div>
+      <TagFilter/>
       <Products productWithVariants={productWithVariants} />
     </main>
   );

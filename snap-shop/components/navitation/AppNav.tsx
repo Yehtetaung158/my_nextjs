@@ -1,3 +1,4 @@
+// "use client";
 import React, { useEffect } from "react";
 import NavLogo from "./NavLogo";
 import UserButton from "./UserButton";

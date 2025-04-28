@@ -1,16 +1,27 @@
-import { VariantsWithProduct } from "@/lib/infer-types";
+"use client";
+import { ProductsWithVariants, VariantsWithProduct } from "@/lib/infer-types";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import { useSearchParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 type productProps = {
   productWithVariants: VariantsWithProduct[];
 };
 
 const Products = ({ productWithVariants }: productProps) => {
+  const params=useSearchParams();
+  const tagParams=params.get("tag") || "iphone";
+  const [filterProducts,setFilteredProducts]=useState<VariantsWithProduct[]>([])
+  useEffect(() => {
+    const filteredItems = productWithVariants.filter(
+      (item) => item.variantsTags[0].tag.toLocaleLowerCase() === tagParams
+    );
+    setFilteredProducts(filteredItems);
+  }, [tagParams]);
   return (
     <main className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-      {productWithVariants.map((p) => {
+      {filterProducts.map((p) => {
         return (
           <Link
             key={p.id}
