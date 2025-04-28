@@ -17,8 +17,6 @@ const SearchBox = ({ productWithVariants }: SearchBoxProps) => {
   const [searchResults, setSearchResults] = useState<VariantsWithProduct[]>([]);
   const { isSearchOpen, setIsSearchOpen } = useCartStore((state) => state);
 
-  console.log("isSearchOpen", isSearchOpen);
-
   useEffect(() => {
     if (searchKey !== "") {
       const filteredProducts = productWithVariants.filter((item) => {

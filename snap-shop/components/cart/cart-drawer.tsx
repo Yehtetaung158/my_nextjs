@@ -19,7 +19,6 @@ type CartDrawerProps = {
 };
 const CartDrawer = ({ children }: CartDrawerProps) => {
   const cartPosition = useCartStore((state) => state.cartPosition);
-  console.log("cartPosition", cartPosition);
   return (
     <>
       <Drawer>
